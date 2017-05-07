@@ -171,14 +171,14 @@ td{
 </style>
 <script type="text/javascript">
 function checkbox() {
-	dept= document.getElementById('d[]').checked;
-	role = document.getElementById('r[]').checked;
+	dept= document.getElementById('d[]').value;
+	role = document.getElementById('r[]').value;
 	password = document.getElementById('pass').value;
-if(dept == false)
+if(dept == "")
 { alert('please choose a department!!!'); 
 return false;
 }
-if(role == false)
+if(role == "")
 { 
 alert('Please select a role!!'); 
 return false;

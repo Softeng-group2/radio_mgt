@@ -516,16 +516,21 @@ td{
 $rowCount = count($_POST['prog']);
 for($i=0;$i<$rowCount;$i++) {
 if($_POST['prog']=="sunday"){
-	$result = mysql_query("SELECT * FROM sunday");
-		while($row= mysql_fetch_array($result)){
-		if($row['id']==""){
+	
+	$result1 = mysql_query("select count(*) as total FROM sunday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
 		?>
-        <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td>
+        <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM sunday]");
+			while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -557,16 +562,22 @@ if($_POST['prog']=="sunday"){
 			}
 
 if($_POST['prog']=="monday"){
-	$result = mysql_query("SELECT * FROM monday");
-	while($row= mysql_fetch_array($result)){
-		if($row['id']==""){
+	
+		$result1 = mysql_query("select count(*) as total FROM monday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+		
 		?>
-        <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td>
+        <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM monday");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -598,16 +609,22 @@ if($_POST['prog']=="monday"){
 	}
 
 if($_POST['prog']=="tuesday"){
-	$result = mysql_query("SELECT * FROM tuesday");
-	while($row= mysql_fetch_array($result)){
-		if($row['id']==""){
+	
+		$result1 = mysql_query("select count(*) as total FROM tuesday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+		
 		?>
-        <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td>
+        <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM tuesday");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -639,16 +656,22 @@ if($_POST['prog']=="tuesday"){
 	}
 	
 if($_POST['prog']=="wednesday"){
-	$result = mysql_query("SELECT * FROM wednesday");
-	while($row= mysql_fetch_array($result)){
-		if($row['id']==""){
+	
+		$result1 = mysql_query("select count(*) as total FROM wednesday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+		
 		?>
-        <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td>
+        <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM wednesday");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -680,16 +703,22 @@ if($_POST['prog']=="wednesday"){
 	}
 	
 if($_POST['prog']=="thursday"){
-	$result = mysql_query("SELECT * FROM thursday");
-	while($row= mysql_fetch_array($result)){
-		if(empty($result)){
+	
+		$result1 = mysql_query("select count(*) as total FROM thursday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+		
 		?>
-        <tr><td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td></tr>
+        <tr><td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td></tr>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM thursday");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -721,16 +750,22 @@ if($_POST['prog']=="thursday"){
 	}
 	
 if($_POST['prog']=="friday"){
-	$result = mysql_query("SELECT * FROM friday");
-	while($row= mysql_fetch_array($result)){
-		if($row['id']==""){
+	
+		$result1 = mysql_query("select count(*) as total FROM friday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+		
 		?>
-        <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td>
+        <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM friday");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";
@@ -766,20 +801,26 @@ if($_POST['prog']=="friday"){
 	}
 	
 if($_POST['prog']=="saturday"){
-	$result = mysql_query("SELECT * FROM saturday where id is not null");
-	while($row= mysql_fetch_array($result)){
-		if($row['id']=='0'){
+	
+		$result1 = mysql_query("select count(*) as total FROM saturday");
+	while($row1= mysql_fetch_array($result1)){
+		$countedrows = $row1['total'];
+	}
+		
+		if($countedrows==0){
 			
-		echo'<h1 align="center">No records available</h1>';
+	
 		?>
         <script type="text/javascript">
 		document.getElementsByName('update').style.visibility='hidden';
 		
 		</script>
-       <tr> <td colspan="5" style="background:rgba(255,255,255,0.5);"><h1 align="center">No records available</h1></td></tr>
+       <tr> <td colspan="5" style="background:rgba(255,255,255,0.7);"><h1 align="center" style=" color:rgb(0,0,0);">No records available</h1></td></tr>
         <?php
 		}
 		else{
+			$result = mysql_query("SELECT * FROM saturday where id is not null");
+	while($row= mysql_fetch_array($result)){
 			$counter = mysql_num_rows($result);
 			if($counter%2==0)
 			$classname="evenRow";

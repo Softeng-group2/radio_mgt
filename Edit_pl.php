@@ -15,10 +15,13 @@ if(isset($_POST['next'])){
 
 <script type="text/javascript">
 function UpdateAction() {
-
-alert('<?php echo"Sure about editing the program lineup for ". $prog." ?"; ?>');	
-document.progtablist.action = "Edit_pl_next.php";
-
+var prog = document.getElementById('prog').value;
+if(window.confirm('Sure about editing program lineup for '+prog)){
+return true;
+}else{
+	return false;
+	
+	}
 	
 }
 </script>
@@ -188,6 +191,12 @@ th{
 td{
 	text-align:center;
 }
+.btn:focus{
+	outline:none;
+}
+.btndel:focus{
+	outline:none;
+}
 .btn{background:url(images/dragon_dark_wolf_bitdefender_antivirus_73443_300x187.jpg);
 		color:rgb(255,255,255);
 		width:120px;
@@ -267,7 +276,7 @@ td{
 <th >Date Created</th>
 <th colspan="2">Options</th>
 </tr>
-<form name="progtablist" method="post" action="" onSubmit="UpdateAction();">
+<form name="progtablist" method="post" action="Edit_pl_next.php" onSubmit="if(!UpdateAction()){return false;}">
 <?php
 $counter = 1;
 while($row = mysql_fetch_array($result)) {
@@ -281,14 +290,14 @@ $classname="oddRow";
 
 
 
-<td><input type="radio" name="prog" value="<?php echo $row["table_name"]; ?>" required class="rbtn" ></td>
+<td><input type="radio" name="prog" value="<?php echo $row["table_name"]; ?>" required class="rbtn" id="prog"></td>
 <td><?php echo $counter; ?></td>
 <td><?php echo ucfirst($row["table_name"]); ?></td>
 <td><?php echo $row["table_rows"]." "."record(s)"; ?></td>
 <td><?php echo $row["create_time"]; ?></td>
 <!--</tr>
 <tr style="background:rgba(0,255,0,0.7); width:100%;">-->
-<td><input type="submit" name="next" value="Update" class="btn" /></td><td><input type="submit" name="del" value="Delete" class="btndel" /></td>
+<td><input type="submit" name="next" value="Update" class="btn"/></td><td><input type="submit" name="del" value="Delete" class="btndel" /></td>
 </tr>
 <?php
 
