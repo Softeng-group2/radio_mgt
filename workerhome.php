@@ -1,11 +1,26 @@
 <?php require_once('../Connections/se.php'); ?>
+<?php require_once('connection.php'); ?>
+
 <?php
 session_start();
 $_SESSION['topic']= $_POST["topic$i"];
 $_SESSION['minute']= $_POST["minutes$i"];
+
+
+
 //initialize the session
 if (!isset($_SESSION)) {
   session_start();
+  
+  $profilequery=mysql_query("select * from work_details WHERE  Username='".$_SESSION['MM_Username']."'") or die(mysql_error());
+
+while($profile=mysql_fetch_assoc($profilequery)){
+
+		$_SESSION['MM_Img']=$profile['Img'];
+		}
+  
+$_SESSION['MM_Img']; 
+ 
 }
 
 // ** Logout the current user. **
@@ -15,6 +30,16 @@ if ((isset($_SERVER['QUERY_STRING'])) && ($_SERVER['QUERY_STRING'] != "")){
 }
 
 if ((isset($_GET['doLogout'])) &&($_GET['doLogout']=="true")){
+	$getusertime= mysql_query("select * from attendance where `Name` ='".$_SESSION['MM_Username']."'") or die(mysql_error());
+	while($get=mysql_fetch_assoc($getusertime)){
+	$curUsertime=$get['Time_SignedIn'];
+	$time1= strtotime($curUsertime);
+	$time2 = strtotime(date('H:i:s'));
+	$workedouthours= round(abs($time2 - $time1)/3600,1);
+	
+	$updatequery = mysql_query("UPDATE `attendance` SET `Time_SignedOut`='".date('H:i:s')."',`Hours_worked`='".$workedouthours."',`Signedin`='Yes',`Signedout`='Yes' WHERE `Name` ='".$_SESSION['MM_Username']."' and Date=CURRENT_DATE") or die(mysql_error());
+	}
+	
   //to fully log out a visitor we need to clear the session varialbles
   $_SESSION['MM_Username'] = NULL;
   $_SESSION['MM_UserGroup'] = NULL;
@@ -23,7 +48,7 @@ if ((isset($_GET['doLogout'])) &&($_GET['doLogout']=="true")){
   unset($_SESSION['MM_UserGroup']);
   unset($_SESSION['PrevUrl']);
 	
-  $logoutGoTo = "index.php";
+  $logoutGoTo = "attendanceExit.php";
   if ($logoutGoTo) {
     header("Location: $logoutGoTo");
     exit;
@@ -116,7 +141,6 @@ $query_Recordset1 = sprintf("SELECT * FROM work_details WHERE Username = %s", Ge
 $Recordset1 = mysql_query($query_Recordset1, $se) or die(mysql_error());
 $row_Recordset1 = mysql_fetch_assoc($Recordset1);
 $totalRows_Recordset1 = mysql_num_rows($Recordset1);
-
 $colname_Recordset2 = "-1";
 if (isset($_SESSION['MM_Username'])) {
   $colname_Recordset2 = $_SESSION['MM_Username'];
@@ -180,7 +204,7 @@ body{
 	background:rgba(255,255,255,0.5); 
 	overflow:scroll;
 	border:8px groove rgba(0,102,255,0.5);
-	margin-left:190px;
+	margin-left:-175px;
 	}
 	button{
 		background:rgb(0,0,0);
@@ -249,30 +273,181 @@ body{
 }	
 a:link {
 	text-decoration: none;
+	color: rgb(255,255,255);
 }
 a:visited {
 	text-decoration: none;
-	color: rgb(0,0,255);
+	color: rgb(0,255,255);
 }
 a:hover {
 	text-decoration: none;
 }
 a:active {
 	text-decoration: none;
-	color: rgb(0,0,255);
+	color: rgb(255,255,255);
 }
-</style>
+ #menuBody {
+            bottom: 0;
+            text-align: center;
+            width: 100%;
+            border-radius: 10px 10px 0 0;
+			
+        }
+        #menuBody li {
+            list-style-type: none;
+            display: inline-block;
+            position: relative;
+        }
+   #menuBody li img {
+          width: 64px;
+          height: 64px;
+          -webkit-box-reflect: below 2px
+                    -webkit-gradient(linear, left top, left bottom, from(transparent),
+                    color-stop(0.7, transparent), to(rgba(255,255,255,.5)));
+          -webkit-transition: all 0.3s;
+          -webkit-transform-origin: 50% 100%;
+        }
 
+
+#menuBody li:hover img { 
+          -webkit-transform: scale(2);
+          margin: 0 2em;
+        }
+        #menuBody li:hover + li img,
+        #menuBody li.prev img {
+          -webkit-transform: scale(1.5);
+          margin: 0 1em;
+        }
+
+#menuBody li span {
+            display: none;
+            position: absolute;
+            bottom: 140px;
+            left: 0;
+            width: 100%;
+            background-color: rgba(51,51,51,0.8);
+            padding: 4px 0;
+            border-radius: 12px;
+			z-index:99999;
+        }
+        #menuBody li:hover span {
+            display: block;
+            color: #fff;
+			z-index:99999;
+        }
+		
+#outerbox{
+	background:rgba(255,255,255,0.5);
+	width:200px;
+	overflow:hidden;
+	margin-left:-10px;
+	margin-right:20px;
+	margin-top:-10px;
+}
+#sliderbox{
+	position:relative;
+	width:200px;
+	animation: slide  15s infinite;
+}
+#sliderbox img{
+	
+}
+@keyframes slide{
+	0%
+	{
+		left:0px;
+	}
+	20%
+	{
+		left:-0px;
+	}
+	25%
+	{
+		left:-490px;
+	}
+	45%
+	{
+		left:-580px;
+	}
+	50%{
+		left:-660px;
+	}
+	70%{
+		left:-760px;
+	}
+	75%{
+		left:-860px;
+	}
+	95%{
+		left:-940px;
+	}
+	100%{
+		left:-1480px;
+	}}
+	@media(max-width:100%) and (min-width: 520px){
+@viewport{
+	width:200px;
+}
+	}
+.img{
+	-webkit-animation: anim 10s infinite linear;
+	animation: anim 10s infinite linear;
+	-moz-animation: anim 10s infinite linear;
+	margin-left:100px;
+	margin-top:0px;
+}
+@-moz-keyframes anim{
+	from{-moz-transform:rotateY(0deg);}
+	to{-moz-transform:rotateY(360deg);}
+}
+@-webkit-keyframes anim{
+	from{-webkit-transform:rotateY(0deg);}
+	to{-webkit-transform:rotateY(360deg);}
+}
+@keyframes anim{
+	from{transform:rotateY(0deg);}
+	to{transform:rotateY(360deg);}
+	}	
+</style>
+<link rel="stylesheet" href="3D-Cover-Flow-Style-Image-Carousel-Plugin-with-jQuery-Cloud-9-Carousel/css/main1.css">
+<link href="../SoftwareEngineering/jctipttop.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="slideshow-master/slideshow.css">		
+</style>
+<link href="../SpryAssets/SpryTabbedPanels.css" rel="stylesheet" type="text/css">
 <script src="js-script.js" type="text/javascript"></script>
 <script src="jquery-2.2.3.min.js" type="text/javascript"></script>
+<script src="../SpryAssets/SpryTabbedPanels.js" type="text/javascript"></script>
 <meta charset="utf-8">
+<script type="text/javascript">
+function profile(){
+	window.open("programs.php?day=<?php echo date('l') ?>","width:1600,height:170,0,status=0,scrollbars=1","title:Personal Details");
+	
+	}
+function msg(){
+	window.open("messaging.php","width:1600,height:170,0,status=0,scrollbars=1","title:Inhouse Messaging");
+	
+	}
+function profile(){
+	window.open("workersprofile.php","width:1600,height:170,0,status=0,scrollbars=1","title:Profile");
+	
+	}
+	function profilepic(){
+		window.open("workersprofile.php?Profile=<?php echo $_SESSION['MM_Username']; ?>&img=<?php echo $_SESSION['MM_Img']; ?>#fullpic","width:1600,height:170,0,status=0,scrollbars=1","title:Profile");
+		}	
+	function sod(){
+		window.open("SOD.php?Worker=<?php echo $_SESSION['MM_Username']; ?>","width:1600,height:170,0,status=0,scrollbars=1","title:Staff On Duty");
+		}	
+		
+</script>	
 </head>
 
 <body background="images/img108.jpg" onLoad="cyclenext()">
 
-<h1 align="center" class="h1"><span>ENTER AGENDA FOR TODAY'S DISCUSSIONS HERE</span></h1>
 
-<div style="float:left; margin-left:10px; width:165px; height:165px; border-radius:165px; background:url(images/img184.JPG); background-position:190px top; background-size:; color:rgb(255,255,255); padding:3px 3px 3px 3px; border:5px groove rgba(204,204,204,1); text-align:center; position:absolute; margin-top:10px; font-size:19px;">
+
+<h1 align="center"><span style="color:rgb(0,255,204);">HOME</span></h1>
+
+<div style="float:left; margin-left:0px; width:140px; height:140px; border-radius:140px; border-radius: 140px; background: linear-gradient(rgba(0,0,51,1),rgba(0,0,255,1));  border: 5px rgba(0,153,255,1) solid;  color:rgb(255,255,255); padding:3px 3px 3px 3px;  text-align:center; position:absolute; margin-top:10px; font-size:19px;">
 
 
 
@@ -292,12 +467,73 @@ a:active {
      });
  }
 </script>
-<div style="margin-top:65px;">
-<span id="hours" style="font-size:30px;">0</span>:<span id="minutes" style="font-size:30px;">0</span>:<span id="seconds" style="font-size:30px;">0</span>
-<a href="checkpoint.php#transit"><input type="submit" value="Back" class="back"></a>
+<div style="margin-top:55px;">
+<span id="hours" style="font-size:20px;">0</span>:<span id="minutes" style="font-size:20px;">0</span>:<span id="seconds" style="font-size:20px;">0</span>
+<a href="checkpointNav.php#transit"><input type="submit" value="Back" class="back"></a>
+<?php
+$btnquery=mysql_query("select count(*) as admincount from work_details WHERE Usertype='Admin' and Username='".$_SESSION['MM_Username']."'") or die(mysql_error());
+while($btn=mysql_fetch_assoc($btnquery)){
+	if($btn['admincount']<1){
+		echo'<style>.back{display:none;}</style>';
+		
+		}
+	
+	}
+
+?>
 </div>
 </div>
-<div style="float:right; margin-right:30px; width:165px; height:165px; border-radius:165px; background:url(images/img184.JPG); background-position:90px bottom left; background-size:; color:rgb(255,255,255); padding:3px 3px 3px 3px; border:5px groove rgba(204,204,204,1); text-align:center;  margin-top:10px; font-size:19px;">
+
+<div style="float: left; height: 140px; width: 140px; border-radius: 140px; background: linear-gradient(rgba(0,0,51,1),rgba(0,0,255,1));  border: 5px rgba(0,153,255,1) solid; text-align: center; margin-left: 0px; margin-top: 175px;">
+<br/>
+<div align="center">
+<?php
+$profilequery=mysql_query("select * from work_details WHERE  Username='".$_SESSION['MM_Username']."'") or die(mysql_error());
+?>
+
+
+<?php
+while($profile=mysql_fetch_assoc($profilequery)){
+	if(empty($profile['Img'])){
+?>
+<img src="images/icontexto-user-web20-stumbleupon.ico" height="95" width="95" style="margin-top:0px;">
+<?php
+	}else{
+		$_SESSION['MM_Img']=$profile['Img'];
+		?>
+<a href="javascript:void(0);" onClick="profilepic()"> <img src="workersprofile/<?php echo $profile['Img']?>" height="95" width="95" style="margin-top:5px; border-radius:100%;">	</a>	
+		<?php
+		}
+
+}
+?>
+
+
+
+<a href="javascript:void(0);" onClick="profile()"><p style="margin-top:-30px;"><h4>Profile</h4></p></a>
+</div>
+</div>
+
+
+
+
+
+
+
+</div>
+
+<div style="float:left; height:140px;  width:140px; border-radius:140px; border-radius: 140px; background: linear-gradient(rgba(0,0,51,1),rgba(0,0,255,1));  border: 5px rgba(0,153,255,1) solid; text-align:center; margin-left:0px; margin-top:334px; margin-left:-150px;  padding:3px 3px 3px 3px; color:rgb(255,255,255);">
+<br/>
+<div align="center">
+<a href="javascript:void(0);" onClick="msg()"><img src="images/Send_256x256.png" height="37" width="37" style="margin-top:0px;"></a>
+<p style="margin-top:-30px;"><h4>Personal Chats</h4></p>
+<a href="javascript:void(0);" onClick="gen()"><img src="images/icontexto-user-web20-myspace.ico" height="37" width="37" style="margin-top:-15px;"></a>
+<p style="margin-top:-30px;"><h4>General Chats</h4></p>
+</div>
+</div>
+
+
+<div style="float:left; margin-top:505px; margin-left:-155px; width:140px; height:140px; border-radius:140px;   color:rgb(255,255,255); padding:3px 3px 3px 3px;border-radius: 140px; background: linear-gradient(rgba(0,0,51,1),rgba(0,0,255,1));  border: 5px rgba(0,153,255,1) solid; text-align:center;  font-size:19px;">
 
 
 <script type="text/javascript">
@@ -318,13 +554,46 @@ function logout(){
 <div style="margin-top:10px;">
 <a href="<?php echo $logoutAction ?>" title="logout"><img src="images/home (2).ico" width="40" height="40" onClick="return(logout());"></a>
 </div>
-
-
 </div>
+
+
+
 <div align="center">
+<script>
+function programs(){
+	window.open('programs.php?day=<?php echo date('l') ?>','width:100%,height:100%,0,status=0,scrollbars=1',"title:Events");
+	}
+
+</script>
+<div id="menuBody">
+ <div id="menu">
+   <ul>
+   <li style="margin-left:-110px;">
+   <span>Staff On Duty</span>
+   <a href="javascript:void(0);" onClick="sod()"><img src="images/icontexto-user-web20-favorites.ico" height="30" width="30"></a>
+   </li>
+   <li style="padding-bottom:20px; padding-top:20px; padding-right:70px; padding-left:90px;"><span>All workers</span>
+   <a href=""><img src="images/icontexto-user-web20-flickr.ico"  height="30" width="30"></a>
+   </li>
+   <li style="padding-bottom:20px; padding-top:20px; padding-right:70px; padding-left:70px;">
+   <span>Events</span>
+   <a href="?&day=<?php echo date('d') ?>&month=<?php echo date('m') ?>&year=<?php echo date('Y') ?>#events"><img src="images/musical_vector-1280x800.jpg" height="30" width="30"></a>
+   </li>
+   <li style="padding-bottom:20px; padding-top:20px; padding-right:70px; padding-left:70px;">
+   <span>Program Lineup</span>
+   <a href="javascript:void(0);" onClick="programs()"><img src="images/Presentation_256x256.png" height="30" width="30"></a>
+   </li>
+   <li style="padding-bottom:20px; padding-top:20px; padding-right:70px; padding-left:70px;">
+   <span>On Air</span>
+   <a href=""><img src="images/iata-care-este-singurul-radio-din-romania-invitat-.jpg" height="30" width="30"></a>
+   </ul>
+   </div>
+   </div>
+
+
 <div class="con">
 
-
+<div style="background:rgb(0,0,51); text-align:center; padding-bottom:5px; padding-top:5px; font-size:24px; color:rgb(0,255,204);">ENTER AGENDA FOR TODAY'S DISCUSSIONS HERE</div>
 <div class="con-for-day">
 <form method="post" action="" onSubmit="return confirm('Are you sure you want to continue?');">
 
@@ -355,7 +624,7 @@ if(isset($_POST['btn-form1']))
 {
 	if($_POST['no_of_rec']=='0'){
 		?>
-      <div align="center">
+      <div align="center" style="">
         <div style="width:60%; height:auto; padding-bottom:10px; padding-top:10px; padding-left:5px;
         padding-right:5px; border-radius:10px; background:rgba(0,255,255,0.8);">
         <h1>You must enter a positive whole number greater than zero!!!</h1>
@@ -530,9 +799,10 @@ textarea{
 	background:linear-gradient(rgba(0,153,255,1),rgba(0,0,51,1));
 	color:rgb(255,255,255);
 	border:1px #000000 solid;
-	margin-left:30px;
+	margin-left:20px;
 	padding:5px 5px 5px 5px;
 	cursor:pointer;
+	margin-bottom:-0px;
 	}
 </style>
 
@@ -550,11 +820,13 @@ while($row_Recordset2 = mysql_fetch_assoc($Recordset2)){
 			}
 	
 	}
-$adminquery = mysql_query("select count(*) as admin from work_details where Usertype='Admin'") or die(mysql_error());
+	
+$adminquery = mysql_query("select count(*) as admin from work_details where Usertype='Admin' and Username = '".$_SESSION['MM_Username']."'") or die(mysql_error());
 while($admin= mysql_fetch_assoc($adminquery)){
 		if($admin['admin']==1){
 			echo'<style>.con-msg{display:block;}</style>';
 			echo'<style>.back{display:block;}</style>';
+			echo'<style>.forumcon{display:block;}</style>';
 			}	
 	
 	}	
@@ -641,7 +913,7 @@ while($msg = mysql_fetch_assoc($getmessage)){
 			 $status="<a href='workerhome.php?pid={$msg['id']}#info' onClick='getid()'>Info</a>";
 			}
 			
-	echo '<div style="color:white; padding-left:10px; padding-top:14px;">'.$msg['Message'].'</div>'.'<br/>'.'<div style="background:rgba(255,255,255,0.7); padding-bottom:4px; padding-top:4px; padding-left:4px; font-size:14px;">'.date('l j-M-Y',(strtotime($msg['Date_of_msg']))).'&nbsp;'.'@'.'&nbsp;'.date('H:i A',(strtotime($msg['Time_of_msg']))).'&nbsp;'.'&nbsp;'.'Sent by '.'&nbsp;'.$msg['Sender'].'&nbsp;'.'&nbsp;'.'<span style="color:rgba(0,0,255,1)">'.$status.'</span>'.'</div>'; 
+	echo '<div style="color:white; padding-left:10px; padding-top:14px; font-size:18px;">'.$msg['Message'].'</div>'.'<br/>'.'<div style="background:rgba(0,0,0,0.7); color:rgb(204,255,102); padding-bottom:4px; padding-top:4px; padding-left:4px; font-size:14px;">'.date('l jS F, Y',(strtotime($msg['Date_of_msg']))).'&nbsp;'.'@'.'&nbsp;'.date('H:i A',(strtotime($msg['Time_of_msg']))).'&nbsp;'.'&nbsp;'.'Sent by '.'&nbsp;'.$msg['Sender'].'&nbsp;'.'&nbsp;'.'<span style="color:rgba(0,0,255,1)">'.$status.'</span>'.'</div>'; 
 	}
 ?>
 </div>
@@ -728,19 +1000,21 @@ while($user=mysql_fetch_array($usersql)){
 
 </style>
 <?php
+$adminquery = mysql_query("select count(*) as admin from work_details where Usertype='Admin' and Username = '".$_SESSION['MM_Username']."'") or die(mysql_error());
+while($admin= mysql_fetch_assoc($adminquery)){
+
 $forumquery = mysql_query("SELECT COUNT(*) as pro FROM `p_r_o` WHERE `Name`='".$_SESSION['MM_Username']."'") or die(mysql_error());
 while($forum = mysql_fetch_assoc($forumquery)){
 	if($forum['pro']<1){
 		echo'<style>.forumcon{display:none;}</style>';
 		?>
-        <script>
-		alert("User doesn't exist");
-		</script>
         <?php
-		}else{
+		}else if($forum['pro']==1 || $forum['pro']>1){
+			echo'<style>.forumcon{display:block;}</style>';
+			}else if($admin['admin']>0){
 			echo'<style>.forumcon{display:block;}</style>';
 			}
-	
+}
 	}
 ?>
 <br/><br/>
@@ -783,7 +1057,7 @@ while($listencount= mysql_fetch_assoc($listencountsql)){
                 <?php
 			echo'<div style="padding-left:7px;">';
 	echo '<br>'.'<div style="font-weight:bold; color:white;">'.$listen['Sender'].'</div>';
-	echo '<br/>'.'<div style=" color:white;">'.$listen['Message'].'</div>'.'<br/>'.'<br/>'.'</div>'.'<div style="background:rgb(255,255,255); padding-top:5px; padding-bottom:5px; margin-bottom:-7px; padding-left:7px;">'.'@'.'&nbsp;'.$listen['timeofmsg'].'&nbsp;'.'on'.'&nbsp;'.date('l j-M-Y',(strtotime($listen['dateofmsg']))).'</div>'.'<hr>'.'<br/>';
+	echo '<br/>'.'<div style=" color:white;">'.$listen['Message'].'</div>'.'<br/>'.'<br/>'.'</div>'.'<div style="background:rgb(255,255,255); padding-top:5px; padding-bottom:5px; margin-bottom:-7px; padding-left:7px;">'.'@'.'&nbsp;'.$listen['timeofmsg'].'&nbsp;'.'on'.'&nbsp;'.date('l jS F, Y',(strtotime($listen['dateofmsg']))).'</div>'.'<hr>'.'<br/>';
     ?>
     </div>
 		<?php	
@@ -863,14 +1137,20 @@ if(isset($_POST['sendmsg']) && !empty($_POST['msg'])){
 <br/><br/>
 
 <?php
+$adminquery = mysql_query("select count(*) as admin from work_details where Usertype='Admin' and Username = '".$_SESSION['MM_Username']."'") or die(mysql_error());
+while($admin= mysql_fetch_assoc($adminquery)){
+
 $servicecount = mysql_query("SELECT COUNT(*) as sec FROM `work_details` WHERE `Username` = '".$_SESSION['MM_Username']."' and `Role2`='Secretary'") or die(mysql_error());
 while($servicecounter = mysql_fetch_assoc($servicecount)){
 	if($servicecounter['sec']<1){
 		echo'<style>.services{display:none;}</style>';
-		}else{
+		}else if($servicecounter['sec']>1){
 			echo'<style>.services{display:block;}</style>';
-			}
+			}else if($admin['admin']>0){
+				echo'<style>.services{display:block;}</style>';
+				}
 	}
+}
 ?>
 
 <div class="services">
@@ -929,8 +1209,8 @@ while($servicecounter = mysql_fetch_assoc($servicecount)){
 
 
 
-<div id="welcome" class="modalDialog">
-<div align="center" >
+<div id="welcome" class="modalDialog" >
+<div align="center">
 <br/><br/><br/>
 <div style="float:left; margin-left:590px; margin-top:90px; width:165px; height:165px; border-radius:165px; background:url(images/img184.JPG); background-position:190px top; background-size:; color:rgb(255,255,255); padding:3px 3px 3px 3px; border:5px groove rgba(204,204,204,1); text-align:center; position:absolute; margin-top:10px; font-size:19px;">
 <br/><br/>
@@ -986,7 +1266,7 @@ function add(i){
 <br/><br/>
 <br/>
 <div style="width:300px; border:5px rgba(51,0,255,0.5) solid; height:250px; background:linear-gradient(rgba(102,255,255,1),rgba(255,255,204,1)); border-radius:5%; margin-left:-70px;">
-<a href="#close" title="Close" style="width:50px; height:50px; padding:8px 8px 8px 8px; margin-top:10px; border-radius:150px; text-align:center; background:rgba(0,255,255,1);" class="closed">X</a>
+<a href="workerhome.php" title="Close" style="width:50px; height:50px; padding:8px 8px 8px 8px; margin-top:10px; border-radius:150px; text-align:center; background:rgba(0,255,255,1); color:rgb(0,0,255);" class="closed">X</a>
 <div style="background:rgb(0,255,255); color:rgb(0,0,0); margin-top:-17px;"><h3 align="center"><i>Quote of the day</i></h3>
 </div>
 <div style="text-align:center; color:rgb(0,0,0);" >
@@ -1003,11 +1283,383 @@ function add(i){
 	background:rgba(0,102,255,1);
 	color:rgb(0,0,0);
 }
+.TabbedPanelsTab:focus{
+	background:linear-gradient(rgba(204,204,204,1),rgba(51,51,51,1));
+	color:rgb(255,255,0);
+	outline:2px rgb(255,255,0) solid ;
+}
 </style>
 
 
 </div>
 </div>
+
+<div style="float:right; margin-right:14px; margin-top:-380px;">
+<div class="container">
+<div id="showcase" class="noselect" style="position: relative; overflow-x: hidden; overflow-y: hidden; visibility: visible; "> 
+
+<img src="images/french_musicians_daft_punk-1280x800.jpg" width="100" height="100" class="cloud9-item"><img src="images/iata-care-este-singurul-radio-din-romania-invitat-.jpg" width="100" height="100" class="cloud9-item"><img src="images/mac_apple-1280x800.jpg"  class="cloud9-item" height="100" width="100">
+
+<img src="images/satellite-soyuz-spaceship-space-station-41006.jpg" width="100" height="100" class="cloud9-item">
+
+</div>
+</div>
+</div>
+
+<div id="events" class="modalDialog" style="background:url(images/musical_vector-1280x800.jpg); background-size:cover;">
+<a href="workerhome.php" title="Close" class="close">X</a>
+<h1 align="center" style="color:rgb(255,255,255);">EVENTS</h1>
+<script>
+function prevMonth(month, year){
+	if(month == 1){
+		//if it is the current one,decrease the year and set month to 12
+		--year;
+		month=13;
+		}
+		--month
+		var monthstring = ""+month+"";
+		var monthlength = monthstring.length;
+		
+		if(monthlength <= 1){
+			
+			monthstring = "0" + monthstring;
+			
+			}
+		
+		document.location.href = "workerhome.php?month="+monthstring+"&year="+year+"#events";
+	}
+function nextMonth(month, year){
+	if(month == 12){
+	++year;
+	month = 0;
+	}
+	
+	++month
+		var monthstring = ""+month+"";
+		var monthlength = monthstring.length;
+		
+		if(monthlength <= 1){
+			
+			monthstring = "0" + monthstring;
+			
+			}
+	
+	document.location.href = "workerhome.php?month="+monthstring+"&year="+year+"#events";
+	}	
+</script>
+<?php
+$day = date("j");
+$month = date("n");
+$year = date("Y");
+
+//checking if day has a passing variable
+if(isset($_GET['day'])){
+	//if true get date from url
+	$day = $_GET['day'];
+	}else{
+		//set today as day
+		$day = date("j");
+		
+		}
+
+
+//checking if month has a passing variable
+if(isset($_GET['month'])){
+	//if true get date from url
+	$month = $_GET['month'];
+	}else{
+		//set current month as month
+		$month = date("n");
+		
+		}
+		
+		
+//checking if year has a passing variable
+if(isset($_GET['year'])){
+	//if true get date from url
+	$year = $_GET['year'];
+	}else{
+		//set current year as year
+		$year = date("Y");
+		
+		}	
+
+//calender variables
+$currentTimestamp = strtotime("01-$month-$year");
+
+//current month name
+$monthname = date('F',$currentTimestamp);
+
+//number of days in the current month
+$numberOfDays = date('t',$currentTimestamp);
+
+//variable to initialize loop
+$counter = 0;
+
+	
+?>
+<?php
+//$sql=mysql_query("SELECT * FROM `events` WHERE WEEKOFYEAR(`EventDate`) = WEEKOFYEAR(NOW()) + 1") or die(mysql_error());
+$sql=mysql_query("SELECT * FROM `events` WHERE WEEKOFYEAR(`EventDate`) = WEEKOFYEAR(NOW()) + 2") or die(mysql_error());
+?>
+<table align="center" style="width:800px;" border="1">
+<tr>
+        <td style="width:150px;"><button name="prevBtn" onClick="prevMonth(<?php echo $month.", ".$year ?>)"  style="width:150px; padding-top:10px; padding-bottom:10px; cursor:pointer; background:linear-gradient(rgba(0,0,0,0.5),rgba(153,153,153,0.5));"><img src="images/arrow-left.gif"  height="29" width="29"></button></td>
+        
+        <td colspan="5" style="text-align:center; padding-top:0px; padding-bottom:0px; width:500px; background:linear-gradient(rgba(153,153,153,1),rgba(0,0,0,1)); color:rgb(255,255,0);"><h3><?php echo $monthname.", ".$year; ?></h3></td>
+        
+        <td style="width:150px;"><button name="nextBtn"  onClick="nextMonth(<?php echo $month.", ".$year ?>)" style="width:150px; padding-top:10px; padding-bottom:10px; cursor:pointer; background:linear-gradient(rgba(0,0,0,0.5),rgba(153,153,153,0.5));"><img src="images/arrow-right.gif"  height="29" width="29"> </button></td>
+        
+</tr>
+
+<tr style="background:linear-gradient(rgba(204,204,204,1),rgba(0,153,204,1)); width:100%;" bordercolorlight="#CCFFFF">
+ <td style="width:800px; padding-top:10px; padding-bottom:10px; padding-left:3px; padding-right:3px;" colspan=100%><div id="TabbedPanels1" class="TabbedPanels">
+   <ul class="TabbedPanelsTabGroup">
+     <li class="TabbedPanelsTab" tabindex="0" style="width:382px;padding-top:10px; padding-bottom:10px; background:linear-gradient(rgba(153,153,153,1),rgba(0,0,0,1)); color:rgb(255,255,0); text-align:center;">Categories</li>
+     
+     <li class="TabbedPanelsTab" tabindex="0"  style="width:382px;padding-top:10px; padding-bottom:10px; background:linear-gradient(rgba(153,153,153,1),rgba(0,0,0,1)); color:rgb(255,255,0); text-align:center;">All Events</li>
+   </ul>
+   <div class="TabbedPanelsContentGroup">
+     <div class="TabbedPanelsContent">
+     <table width="800px" style="background:linear-gradient(rgba(255,255,255,1),rgba(0,0,153,0.4));">
+     <tr><td colspan=100% style="text-align:center">Today's Events</td></tr>
+     <?php
+   $date1countsql=mysql_query("SELECT count(*) as eventcount FROM `events`  WHERE `EventDate` = CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."'") or die(mysql_error());
+while($date1count=mysql_fetch_assoc($date1countsql)){
+	if($date1count['eventcount']<1){
+		?>
+        <tr><td colspan=100%><h3 align="center">There are no events for this day <br/> <?php 
+		if(($_GET['month']==date('m'))&&($_GET['year']==date('Y')))
+		{ echo date('l jS F, Y');} ?></h3></td></tr>
+		<?php
+		}else{
+			?>
+               <tr><th width="400px" style=" background:rgba(0,0,51,1); color:rgb(255,255,0); text-align:center; padding-bottom:4px; padding-top:4px;">Event</th><th colspan="2" width="400px" style="text-align:center;background:rgba(0,0,51,1); color:rgb(255,255,0); padding-bottom:4px; padding-top:4px;">Details</th></tr>
+            <?php
+			$date1sql=mysql_query("SELECT * FROM `events`  WHERE `EventDate` = CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."' order by `EventDate` asc") or die(mysql_error());
+			while($date1=mysql_fetch_assoc($date1sql)){
+				?>
+             
+                <tr><td style="text-align:justify; padding-bottom:4px; padding-top:4px; padding-left:2px; background:rgba(255,255,255,0.4);"><?php echo $date1['Title'] ?></td><td colspan="2" style="text-align:justify; padding-left:2px; padding-bottom:4px; padding-top:4px;background:rgba(255,255,255,0.4);"><?php echo $date1['Details'] ?></td></tr>
+                <?php
+			}
+			}
+	
+	}
+   ?>
+     </table>
+     </div>
+     
+     
+     <div class="TabbedPanelsContent">
+       <table width="800px" style="background:linear-gradient(rgba(255,255,255,1),rgba(0,0,153,0.4));">
+       <?php
+	   if(date('m')==$_GET['month'] && date('Y')==$_GET['year'] ){
+	   ?>
+     <tr><td colspan=100% style="text-align:justify; background:rgba(0,0,51,1); color:rgb(255,255,0); font-weight:bold; font-size:22; padding-bottom:10px; padding-top:10px; padding-left:5px;">Past Events</td></tr>
+    
+        <?php
+   $date1countsql=mysql_query("SELECT count(*) as eventcount FROM `events` WHERE `EventDate` < CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."'") or die(mysql_error());
+while($date1count=mysql_fetch_assoc($date1countsql)){
+	if($date1count['eventcount']<1){
+		?>
+        <tr><td colspan=100%><h3 align="center">There are no past events for this month <br/> <?php 
+		if(($_GET['month']==date('m'))&&($_GET['year']==date('Y')))
+		{ echo date('l jS F, Y');} ?></h3></td></tr>
+		<?php
+		}else{
+			?>
+               <tr style="padding-top:10px;"><th width="200px" style="text-align:justify">Date</th><th width="200px" style="text-align:justify">Event</th><th colspan="2" width="400px" style="text-align:justify">Details</th></tr>
+            <?php
+			$date1sql=mysql_query("SELECT * FROM `events`  WHERE `EventDate` < CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."' order by `EventDate` asc") or die(mysql_error());
+			while($date1=mysql_fetch_assoc($date1sql)){
+				?>
+              
+                
+                <tr>
+                <td style="text-align:justify" width="200px"><?php echo date('l jS F, Y',(strtotime($date1['EventDate']))) ?></td>
+                <td style="text-align:justify" width="200px"><?php echo $date1['Title'] ?></td>
+                <td style="text-align:justify;" width="400px"><?php echo $date1['Details'] ?></td></tr>
+                <?php
+			}
+			}
+	
+	}
+   ?>
+    
+    <tr><td colspan=100%><br/></td></tr>
+     <tr><td colspan=100% style="text-align:justify; background:rgba(0,0,51,1); color:rgb(255,255,0); font-weight:bold; font-size:22; padding-bottom:10px; padding-top:10px; padding-left:5px;">Today's Events</td></tr>
+      <?php
+   $date1countsql=mysql_query("SELECT count(*) as eventcount FROM `events` WHERE `EventDate` = CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."'") or die(mysql_error());
+while($date1count=mysql_fetch_assoc($date1countsql)){
+	if($date1count['eventcount']<1){
+		?>
+        <tr><td colspan=100%><h3 align="center">There are no events for this day <br/> <?php 
+		if(($_GET['month']==date('m'))&&($_GET['year']==date('Y')))
+		{ echo date('l jS F, Y');} ?></h3></td></tr>
+		<?php
+		}else{
+			?>
+               <tr style="padding-top:10px;"><th width="200px" style="text-align:justify">Date</th><th width="200px" style="text-align:justify">Event</th><th colspan="2" width="400px" style="text-align:justify">Details</th></tr>
+            <?php
+			$date1sql=mysql_query("SELECT * FROM `events`  WHERE `EventDate` = CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."' order by `EventDate` asc") or die(mysql_error());
+			while($date1=mysql_fetch_assoc($date1sql)){
+				?>
+                
+               
+                
+                <tr>
+                <td style="text-align:justify" width="200px"><?php echo date('l jS F, Y',(strtotime($date1['EventDate']))) ?></td>
+                <td style="text-align:justify" width="200px"><?php echo $date1['Title'] ?></td>
+                <td style="text-align:justify;" width="400px"><?php echo $date1['Details'] ?></td></tr>
+                <?php
+			}
+			}
+	
+	}
+   ?>
+    <tr><td colspan=100%><br/></td></tr>
+     <tr style="text-align:justify; background:rgba(0,0,51,1); color:rgb(255,255,0);"><td colspan=100% style="font-weight:bold; font-size:22; padding-bottom:10px; padding-top:10px; padding-left:5px;">Upcoming Events</td></tr>
+      <?php
+   $date1countsql=mysql_query("SELECT count(*) as eventcount FROM `events` WHERE `EventDate` > CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."'") or die(mysql_error());
+while($date1count=mysql_fetch_assoc($date1countsql)){
+	if($date1count['eventcount']<1){
+		?>
+        <tr><td colspan=100%><h3 align="center">There are no future events for this month <br/> <?php 
+		if(($_GET['month']==date('m'))&&($_GET['year']==date('Y')))
+		{ echo date('l jS F, Y');} ?></h3></td></tr>
+		<?php
+		}else{
+			?>
+               <tr style="padding-top:10px;"><th width="300px" style="text-align:justify">Date</th><th width="200px" style="text-align:justify">Event</th><th colspan="2" width="300px" style="text-align:justify">Details</th></tr>
+            <?php
+			$date1sql=mysql_query("SELECT * FROM `events`  WHERE `EventDate` > CURRENT_DATE AND MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."' order by `EventDate` asc") or die(mysql_error());
+			while($date1=mysql_fetch_assoc($date1sql)){
+				?>
+             
+                
+                <tr>
+                <td style="text-align:justify" width="300px"><?php echo date('l jS F, Y',(strtotime($date1['EventDate']))) ?></td>
+                <td style="text-align:justify" width="200px"><?php echo $date1['Title'] ?></td>
+                <td style="text-align:justify;" width="300px"><?php echo $date1['Details'] ?></td></tr>
+                <?php
+			}
+			}
+	
+	}
+   ?>
+     <tr><td colspan=100%><br/></td></tr>
+     <?php
+	   }else{
+	 ?>
+     <tr><th colspan=100% style="text-align:center;  background:rgba(0,0,51,1); color:rgb(255,255,0); font-weight:bold; font-size:22; padding-bottom:10px; padding-top:10px; padding-left:5px;">All Events</th></tr>
+     <tr><td colspan=100%><br/></td></tr>
+      <?php
+   $date1countsql=mysql_query("SELECT count(*) as eventcount FROM `events`  WHERE MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."'") or die(mysql_error());
+while($date1count=mysql_fetch_assoc($date1countsql)){
+	if($date1count['eventcount']<1){
+		?>
+        <tr><td colspan=100%><h3 align="center">There are no events for this month <br/> <?php 
+		if(($_GET['month']==date('m'))&&($_GET['year']==date('Y')))
+		{ echo date('l jS F, Y');} ?></h3></td></tr>
+		<?php
+		}else{
+			?>
+               <tr><th width="300px" style="text-align:justify">Date</th><th width="200px" style="text-align:justify">Event</th><th colspan="2" width="300px" style="text-align:justify">Details</th></tr>
+            <?php
+			$date1sql=mysql_query("SELECT * FROM `events`  WHERE  MONTH(`EventDate`) = '".$_GET['month']."' AND YEAR(`EventDate`)= '".$_GET['year']."' order by `EventDate` asc") or die(mysql_error());
+			while($date1=mysql_fetch_assoc($date1sql)){
+				?>
+             
+                
+                <tr>
+                <td style="text-align:justify" width="300px"><?php echo date('l jS F, Y',(strtotime($date1['EventDate']))) ?></td>
+                <td style="text-align:justify" width="200px"><?php echo $date1['Title'] ?></td>
+                <td style="text-align:justify;" width="300px"><?php echo $date1['Details'] ?></td></tr>
+                <?php
+			}
+			}
+	
+	}
+   ?>
+     <tr></tr>
+     <?php
+	   }
+	 ?>
+     </table>
+     
+     </div>
+   </div>
+ </div></td>
+        
+       
+</tr>        
+</table>
+
+</div>
+<script type="text/javascript">
+var TabbedPanels1 = new Spry.Widget.TabbedPanels("TabbedPanels1");
+</script>
+
+ <script src="slideshow-master/slideshow.js"></script>
+<script src="jquery-2.2.3.min.js"></script> 
+<script src="3D-Cover-Flow-Style-Image-Carousel-Plugin-with-jQuery-Cloud-9-Carousel/jquery.reflection.js"></script> 
+<script src="3D-Cover-Flow-Style-Image-Carousel-Plugin-with-jQuery-Cloud-9-Carousel/jquery.cloud9carousel.js"></script> 
+<script>
+    $(function() {
+      var showcase = $("#showcase")
+
+      showcase.Cloud9Carousel( {
+        yPos: 42,
+        yRadius: 48,
+        mirrorOptions: {
+          gap: 12,
+          height: 0.2
+        },
+        buttonLeft: $(".nav > .left"),
+        buttonRight: $(".nav > .right"),
+        autoPlay: true,
+        bringToFront: true,
+        onRendered: showcaseUpdated,
+        onLoaded: function() {
+          showcase.css( 'visibility', 'visible' )
+          showcase.css( 'display', 'none' )
+          showcase.fadeIn( 1500 )
+        }
+      } )
+
+      function showcaseUpdated( showcase ) {
+        var title = $('#item-title').html(
+          $(showcase.nearestItem()).attr( 'alt' )
+        )
+
+        var c = Math.cos((showcase.floatIndex() % 1) * 2 * Math.PI)
+        title.css('opacity', 0.5 + (0.5 * c))
+      }
+
+      // Simulate physical button click effect
+      $('.nav > button').click( function( e ) {
+        var b = $(e.target).addClass( 'down' )
+        setTimeout( function() { b.removeClass( 'down' ) }, 80 )
+      } )
+
+      $(document).keydown( function( e ) {
+        //
+        // More codes: http://www.javascripter.net/faq/keycodes.htm
+        //
+        switch( e.keyCode ) {
+          /* left arrow */
+          case 37:
+            $('.nav > .left').click()
+            break
+
+          /* right arrow */
+          case 39:
+            $('.nav > .right').click()
+        }
+      } )
+    })
+  </script> 
 </body>
 </html>
 <?php

@@ -26,7 +26,7 @@ body{
 <td>Roles</td>
 <td>Work ID</td>
 <td>Date of Signup</td>
-
+<td>Profile Picture</td>
 </tr>
 <?php
 $counter=1;
@@ -50,7 +50,18 @@ while($listen=mysql_fetch_assoc($workerdetails)){
     <td><?php echo $listen['Department2'] ?></td>
     <td><?php echo $listen['Role1'].'&nbsp;'.$listen['Role2'].'&nbsp;'.$listen['Role3'].'&nbsp;'.$listen['Role4'].'&nbsp;'.$listen['Role5'].'&nbsp;'.$listen['Role6'].'&nbsp;'.$listen['Role7'].'&nbsp;' ?></td>
     <td><?php echo $listen['DCODE'].$listen['DID'] ?></td>
-    <td ><?php echo date('l j-M-Y',(strtotime($listen['Date_of_signup'])))?></td>
+    <td ><?php echo date('l jS F, Y',(strtotime($listen['Date_of_signup'])))?></td>
+    <td>  <?php
+	   if(empty($listen['Img'])){
+	   ?>
+        <img src="profilepic/noavatar92.png"  width="100px" height="100px" class="img" />
+        <?php
+	   }else{
+		   ?>
+		   <img src="workersprofile/<?php echo $listen['Img']; ?>"  width="100px" height="100px" class="img" /> 
+		   <?php
+	   }
+	   ?></td>
     </tr>
 	<?php
 	$counter++;

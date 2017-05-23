@@ -143,7 +143,7 @@ $counter = 0;
 ?>
 
 
-<h1 align="left">Click on date to get number of hours worked per week</h1>
+<h1 align="left">Click on date to get number of hours worked per week  <a href="adminhome.php"><img src="images/home.jpg" height="35" width="35" style="margin-top:-5px; margin-left:30px;"></a></h1>
 <div align="left">
 
 <table border="1" bordercolor="#000000";>
@@ -230,15 +230,16 @@ while($try=mysql_fetch_array($trysql)){
 </div>
 <br/><br/><?php
 if(isset($_GET['v'])){
+	echo'<style>.month{display:none;}</style>';
 ?>
 <div style="float:right; margin-right:200px; height:auto; width:500px; background:rgba(255,255,255,0.8); padding:5px 5px 5px 5px; margin-top:-260px;">
-<table cellpadding="8" style="width:500px;">
+<table cellpadding="8" style="width:500px;" border="1">
 <?php
 $time = strtotime($_GET["year"].'-'.$_GET["month"].'-'.$_GET["day"]);
 $weekstartingdate= date('Y-m-d',strtotime("last Sunday",$time));
 $weekendingdate= date('Y-m-d',strtotime("next Saturday",$time));
 ?>
-<tr><td colspan="3" style="text-align:center; padding:5px 5px 5px 5px;">Between <?php echo date('l j-M-Y',(strtotime($weekstartingdate))) ?> and <?php echo date('l j-M-Y',(strtotime($weekendingdate)))?></td></tr>
+<tr><td colspan="3" style="text-align:center; padding:5px 5px 5px 5px;">Between <?php echo date('l jS F, Y',(strtotime($weekstartingdate))) ?> and <?php echo date('l jS F, Y',(strtotime($weekendingdate)))?></td></tr>
             <tr><th style="text-align:justify;">##</th><th style="text-align:justify;">Worker</th><th style="text-align:justify;">Number of Hours worked</th></tr>
 
 
@@ -246,7 +247,7 @@ $weekendingdate= date('Y-m-d',strtotime("next Saturday",$time));
 
 
 <?php
-$worksql= mysql_query("SELECT `Name`, SUM(`Hours_worked`) as workhours FROM `attendance` WHERE `Date` BETWEEN '".$weekstartingdate."' AND '".$weekendingdate."' GROUP BY `Name`") or die(mysql_query());
+$worksql= mysql_query("SELECT `Name`, FORMAT((SUM(`Hours_worked`)),2) as workhours FROM `attendance` WHERE `Date` BETWEEN '".$weekstartingdate."' AND '".$weekendingdate."' GROUP BY `Name`") or die(mysql_query());
 $count = 1;
 ?>
 
@@ -257,7 +258,7 @@ while($work= mysql_fetch_array($worksql)){
 		}else{
 			?>
             
-            <tr><td><?php echo $count; ?></td><td><?php echo $work['Name']  ?></td><td><?php echo $work['workhours'] ?></td></tr>
+            <tr><td><?php echo $count; ?></td><td><?php echo $work['Name']  ?></td><td><?php echo number_format($work['workhours'],2) ?></td></tr>
             
 			<?php
 			}
@@ -267,17 +268,34 @@ while($work= mysql_fetch_array($worksql)){
 ?>
 </table>
 </div>  
-
-
+<div style="float:right; margin-right:200px; height:auto; width:500px; background:rgba(255,255,255,0.8); padding:5px 5px 5px 5px; margin-top:-260px;" class="month">
+<table cellpadding="8" width="500px" border="1">
+<tr><td colspan="3"><h3 align="center">Records for the month of <?php echo $monthname.", ".$year ?></h3></td></tr>
+ <tr><th style="text-align:justify;">##</th><th style="text-align:justify;">Worker</th><th style="text-align:justify;">Number of Hours worked</th></tr>
 <?php
+$count=1;
 if($_GET['month']!=="" && $_GET['year']!==""){
-$getmonthquery=mysql_query("select * from attendance where") or die(mysql_error());	
+$getmonthquery=mysql_query("SELECT `Name`, SUM(`Hours_worked`) as workhours FROM `attendance` where YEAR(`Date`)= '".$_GET['year']."' AND MONTH(`Date`) = '".$_GET['month']."'GROUP BY `Name`") or die(mysql_error());	
 	
+while($getmonth=mysql_fetch_assoc($getmonthquery)){
+	if(mysql_num_rows($getmonthquery)<1){
+		?>
+        <tr><td colspan="3"><h3 align="center">No records available</h3></td></tr>
+        <?php
+		}else{
+			?>
+		<tr><td><?php echo $count ?></td><td><?php echo $getmonth['Name'] ?></td><td><?php echo $getmonth['workhours'] ?></td></tr>	
+			<?php
+			}
 	
+	$count++;
+	}	
 	
 	}
 
 
  ?>
+</table> 
+</div>
 </body>
 </html>
